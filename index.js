@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const {  } = require("./config/database.js");
 const dotenv = require('dotenv');
 const api = require('./routes/api.js');
 const { default: dbConnect } = require('./config/db.connect.js');
@@ -11,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-dbConnect();
+// dbConnect();
 
 app.use("/api", api);
 
