@@ -1,10 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const api = require('./routes/api.js');
-const { default: dbConnect } = require('./config/db.connect.js');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import api from './routes/api.js';
+// import { dbConnect } from './config/db.connect.js';
 
-dotenv.config();
+dotenv.config();    
 
 const app = express();
 app.use(cors());
