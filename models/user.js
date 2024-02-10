@@ -15,12 +15,12 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     //classesjoined
-    classesjoined: [
+    joinedClassrooms: [
         {
             type: String,
         }
     ],
-    classescreated: [
+    createdClassrooms: [
         {
             type: String
         }

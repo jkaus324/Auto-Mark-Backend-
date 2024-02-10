@@ -39,29 +39,3 @@ export const register = async (req, res) => {
     }
 }
 
-
-export const main = (req, res)=>{
-    const pythonScriptPath = 'main.py';
-
-    // Command to execute Python script
-    const command = `python ${pythonScriptPath}`;
-  
-    // Execute Python script
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing Python script: ${error}`);
-        res.status(500).json({ error: 'Error executing Python script' });
-        return;
-      }
-  
-      // Output from Python script
-      console.log(`Output: ${stdout}`);
-      
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-      }
-      
-      // Send output to frontend
-      res.json({ output: stdout });
-    });
-}

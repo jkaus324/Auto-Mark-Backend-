@@ -1,5 +1,6 @@
 import ClassRoom from "../models/classroom.js";
 import User from "../models/user.js"; // Assuming you have a User model
+import {exec} from 'child_process'
 
 export const createClassroom = async (req, res) => {
   const { email, name } = req.body;
@@ -20,6 +21,9 @@ export const createClassroom = async (req, res) => {
       code: generateUniqueCode(), // You need to implement this function to generate a unique code
       students: [],
     });
+
+    user.createdClassrooms.push(classroom.code)
+    await user.save(); 
 
     // Save the classroom to the database
     await classroom.save();
@@ -69,6 +73,8 @@ export const joinClassroom = async (req, res) => {
         .json({ success: false, message: "User is already in the classroom" });
     }
 
+    user.joinedClassrooms.push(classroom.code)
+    await user.save();
     // Add the user to the classroom
     classroom.students.push(user._id);
     await classroom.save();
@@ -103,11 +109,13 @@ function generateUniqueCode() {
 
 // Get classroom attendance of students who were marked present
 export const getroom = async (req, res) => {
-  const { classCode } = req.params; // Assuming you're passing class code as a URL parameter
+  const { room } = req.params; // Assuming you're passing class code as a URL parameter
 
   try {
     // Find the classroom by code
-    const classroom = await ClassRoom.findOne({ code: classCode });
+    console.log(room);
+    const classroom = await ClassRoom.findOne({ code: room });
+    console.log(classroom);
     if (!classroom) {
       return res
         .status(404)
@@ -115,8 +123,8 @@ export const getroom = async (req, res) => {
     }
 
     // Get the attendance records of students who were marked present
-    const presentStudents = classroom.attendance.students;
-    const totalStudents = classroom.attendace.students;
+    const presentStudents = classroom.attendance;
+    const totalStudents = classroom.students;
 
     return res.json({ success: true, presentStudents: presentStudents, totalStudents: totalStudents });
   } catch (error) {
@@ -130,18 +138,19 @@ export const getroom = async (req, res) => {
 // Set classroom attendance of students
 export const setroom = async (req, res) => {
   const { attendanceRecords } = req.body;
-  const { classCode } = req.params;
+  const { room } = req.params;
 
   try {
-    // Find the classroom by code
-    const classroom = await ClassRoom.findOne({ code: classCode });
+    
+    const classroom = await ClassRoom.findOne({ code: room });
     if (!classroom) {
       return res
         .status(404)
         .json({ success: false, message: "Classroom not found" });
     }
 
-    // Update the attendance records
+    
+    // attendance records map, in there there is id of user which is to be added to the list of presentStudents
     classroom.attendance.students = attendanceRecords;
     await classroom.save();
 
@@ -162,8 +171,8 @@ export const details = async (req,res) => {
 
   try {
     const user = await User.findOne({email: email});
-    const joinedclassroom = user.classesjoined;
-    const createdclassroom = user.classescreated;
+    const joinedclassroom = user.joinedClassrooms;
+    const createdclassroom = user.createdClassrooms;
 
     return res.json({success: true, joinedclassroom: joinedclassroom, createdclassroom: createdclassroom});
 
@@ -171,3 +180,35 @@ export const details = async (req,res) => {
     console.error(err)
   }
 }
+
+export const autoMark = (req, res)=>{
+    let matchedNames = runScript();
+    console.log(matchedNames);
+}
+
+export const runScript = () => {
+  const pythonScriptPath = 'main.py';
+
+  // Command to execute Python script
+  const command = `python ${pythonScriptPath}`;
+
+  // Execute Python script
+  exec(command, (error, stdout, stderr) => {
+      if (error) {
+          console.error(`Error executing Python script: ${error}`);
+          res.status(500).json({ error: 'Error executing Python script' });
+          return;
+      }
+
+      // Output from Python script (matched names)
+      const matchedNames = stdout.trim().split('\n');
+      console.log(`Matched Names: ${matchedNames}`);
+
+      if (stderr) {
+          console.error(`stderr: ${stderr}`);
+      }
+
+      // Send matched names to frontend
+      return matchedNames;
+  });
+};
