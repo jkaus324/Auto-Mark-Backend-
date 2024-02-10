@@ -45,5 +45,6 @@ while time.time() - start_time < duration:
 cap.release()
 cv2.destroyAllWindows()
 
+matched_names = set(matched_names)
 # Print or return matched names
 print(matched_names)
