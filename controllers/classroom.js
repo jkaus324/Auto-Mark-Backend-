@@ -101,8 +101,6 @@ function generateUniqueCode() {
   return code;
 }
 
-import ClassRoom from "../models/classroom";
-
 // Get classroom attendance of students who were marked present
 export const getroom = async (req, res) => {
   const { classCode } = req.params; // Assuming you're passing class code as a URL parameter
