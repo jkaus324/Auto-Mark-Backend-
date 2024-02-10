@@ -29,7 +29,10 @@ const classroomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    attendance: [attendanceSchema]
+    attendance: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 const ClassRoom = mongoose.model('ClassRoom', classroomSchema);
