@@ -1,12 +1,13 @@
 import express from "express";
-import { createClassroom, joinClassroom, room } from "../controllers/classroom.js";
+import { createClassroom, getroom, joinClassroom,  setroom } from "../controllers/classroom.js";
 
 const router = express.Router();
 
 router.post('/join',joinClassroom);
 router.post('/create',createClassroom);
-router.post('/:room/classroom/get',getroom);
-router.post('/:room/classroom/set',setroom);
+router.post('/details',details);
+router.post('/:room/get',getroom);
+router.post('/:room/set',setroom);
 // get classroom details
 // set attendance
 export default router;

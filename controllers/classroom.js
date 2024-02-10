@@ -156,3 +156,18 @@ export const setroom = async (req, res) => {
       .json({ success: false, message: "Error setting classroom attendance" });
   }
 };
+
+export const details = async (req,res) => {
+  const {email} = req.body;
+
+  try {
+    const user = await User.findOne({email: email});
+    const joinedclassroom = user.classesjoined;
+    const createdclassroom = user.classescreated;
+
+    return res.json({success: true, joinedclassroom: joinedclassroom, createdclassroom: createdclassroom});
+
+  } catch(err) {
+    console.error(err)
+  }
+}
